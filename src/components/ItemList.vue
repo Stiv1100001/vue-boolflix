@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <h1 class="text-white">TV Shows</h1>
-    <div class="row g-3">
-      <div class="col-6 col-md-4 col-lg-2" v-for="(show, index) in TVShows" :key="index">
-        <PosterCard :info="show" type="show" />
+    <h1 class="text-white display-1 fw-bold">{{ type === "show" ? "Serie TV" : "Film" }}</h1>
+    <div class="row g-1">
+      <div class="col-6 col-md-4 col-lg-2" v-for="(item, index) in items" :key="index">
+        <PosterCard :info="item" :type="type" />
       </div>
     </div>
   </div>
@@ -12,10 +12,10 @@
 <script>
 import PosterCard from "./PosterCard.vue";
 export default {
-  name: "TVShowList",
-  components: { PosterCard },
+  name: "ItemList",
   props: {
-    TVShows: Array,
+    items: Array,
+    type: String,
   },
   methods: {
     getFlag(lang) {
@@ -26,6 +26,7 @@ export default {
       return url;
     },
   },
+  components: { PosterCard },
 };
 </script>
 
