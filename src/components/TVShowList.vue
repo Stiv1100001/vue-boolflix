@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <h1 class="text-white">Movies</h1>
+    <h1 class="text-white">TV Shows</h1>
     <ul>
-      <li class="text-white" v-for="(movie, index) in movies" :key="index">
-        <span>{{ movie.title }} | {{ movie.original_title }} | {{ movie.vote_average }} | </span>
-        <img :src="getFlag(movie.original_language)" :alt="movie.original_language" />
+      <li class="text-white" v-for="(show, index) in TVShows" :key="index">
+        <span>{{ show.name }} | {{ show.name }} | {{ show.vote_average }} | </span>
+        <img :src="getFlag(show.original_language)" :alt="show.original_language" />
       </li>
     </ul>
   </div>
@@ -12,9 +12,9 @@
 
 <script>
 export default {
-  name: "MoviesList",
+  name: "TVShowList",
   props: {
-    movies: Array,
+    TVShows: Array,
   },
 
   methods: {

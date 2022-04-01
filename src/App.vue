@@ -1,25 +1,40 @@
 <template>
   <div id="app">
     <NavBar @search="search" />
-    <MoviesList :movies="movies" />
+    <MoviesList :movies="movies" class="mb-3" />
+    <TVShowList :TVShows="tvShows" />
   </div>
 </template>
 
 <script>
 import NavBar from "./components/NavBar.vue";
 import MoviesList from "./components/MoviesList.vue";
+import TVShowList from "./components/TVShowList.vue";
 export default {
   name: "App",
-  components: { NavBar, MoviesList },
+  components: { NavBar, MoviesList, TVShowList },
   data: () => ({
     movies: [],
+    tvShows: [],
   }),
   methods: {
     search(query) {
-      const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
+      if (query === "") {
+        this.movies = [];
+        return;
+      }
+
+      const urlMovie = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
+      const urlTV = `https://api.themoviedb.org/3/search/tv?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
+
       this.$axios
-        .get(url)
+        .get(urlMovie)
         .then((res) => (this.movies = res.data.results))
+        .catch((err) => console.error(err.status_message));
+
+      this.$axios
+        .get(urlTV)
+        .then((res) => (this.tvShows = res.data.results))
         .catch((err) => console.error(err.status_message));
     },
   },
