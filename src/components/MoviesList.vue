@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <ul>
-      <li class="text-white" v-for="(movie, index) in movies" :key="index">{{ movie.title }}</li>
+      <li class="text-white" v-for="(movie, index) in movies" :key="index">
+        {{ movie.title }} | {{ movie.original_title }} | {{ movie.original_language }} |
+        {{ movie.vote_average }}
+      </li>
     </ul>
   </div>
 </template>
