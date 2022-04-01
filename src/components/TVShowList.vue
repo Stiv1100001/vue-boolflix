@@ -3,11 +3,7 @@
     <h1 class="text-white">TV Shows</h1>
     <div class="row g-3">
       <div class="col-6 col-md-4 col-lg-2" v-for="(show, index) in TVShows" :key="index">
-        <PosterCard
-          :poster="show.poster_path"
-          :title="show.name"
-          :rate="setRate(show.vote_average)"
-        />
+        <PosterCard :info="show" type="show" />
       </div>
     </div>
   </div>
@@ -28,9 +24,6 @@ export default {
       else if (lang === "ja") url += "jp.png";
       else url += lang + ".png";
       return url;
-    },
-    setRate(rate) {
-      return Math.ceil(rate / 2);
     },
   },
 };
