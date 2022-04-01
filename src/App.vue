@@ -1,8 +1,10 @@
 <template>
-  <div id="app">
+  <div id="app" class="vw-100">
     <NavBar @search="search" />
-    <MoviesList :movies="movies" class="mb-3" />
-    <TVShowList :TVShows="tvShows" />
+    <div class="container-fluid px-3 main-container">
+      <MoviesList :movies="movies" class="mb-3" />
+      <TVShowList :TVShows="tvShows" />
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,7 @@ export default {
     search(query) {
       if (query === "") {
         this.movies = [];
+        this.tvShows = [];
         return;
       }
 
