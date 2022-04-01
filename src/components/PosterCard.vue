@@ -10,6 +10,7 @@
       <p class="m-0 title">{{ info.title || info.name }}</p>
       <p class="m-0 subtitle">{{ info.original_title || info.Original_name }}</p>
       <p class="m-0 actors">Cast: {{ credits }}</p>
+      <p class="m-0 genre" v-if="getGenres().length > 0">Generi: {{ getGenres() }}</p>
       <p class="m-0 rates">
         <span v-for="x in getRate(info.vote_average)" :key="x">
           <font-awesome-icon icon="fa-solid fa-star" />
@@ -30,6 +31,7 @@ export default {
   props: {
     info: Object,
     type: { type: String, required: true },
+    genres: Array,
   },
 
   data: () => ({ credits: {} }),
@@ -42,12 +44,28 @@ export default {
     getRate(rate) {
       return Math.ceil(rate / 2);
     },
+
+    getGenres() {
+      return this.genres
+        .filter((genre) => {
+          if (this.info.genre_ids.includes(genre.id)) return true;
+          return false;
+        })
+        .map((genre) => genre.name)
+        .join(", ");
+    },
   },
 
   created() {
     if (this.type === "movie") {
       const url = `https://api.themoviedb.org/3/movie/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
-      console.log(url);
+
+      this.$axios.get(url).then((res) => {
+        const cast = res.data.cast.slice(0, 5).map((cast) => cast.name);
+        this.credits = cast.join(", ");
+      });
+    } else if (this.type === "show") {
+      const url = `https://api.themoviedb.org/3/tv/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
 
       this.$axios.get(url).then((res) => {
         const cast = res.data.cast.slice(0, 5).map((cast) => cast.name);
@@ -82,7 +100,8 @@ export default {
 
     .subtitle,
     .rates,
-    .actors {
+    .actors,
+    .genre {
       font-size: 0.7rem;
     }
 
