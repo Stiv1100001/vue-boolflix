@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="text-white display-1 fw-bold">{{ type === "show" ? "Serie TV" : "Film" }}</h1>
     <div class="row g-1">
-      <div class="col-6 col-md-4 col-lg-2" v-for="(item, index) in items" :key="index">
+      <div class="col-6 col-md-4 col-lg-2" v-for="item in filteredItems" :key="item.id">
         <PosterCard :info="item" :type="type" :genres="type === 'movie' ? movieGenres : tvGenres" />
       </div>
     </div>
@@ -17,12 +17,12 @@ export default {
   props: {
     items: Array,
     type: String,
+    movieGenres: Array,
+    tvGenres: Array,
+    selectedGenre: Number,
   },
 
-  data: () => ({
-    movieGenres: [],
-    tvGenres: [],
-  }),
+  data: () => ({}),
   methods: {
     getFlag(lang) {
       let url = "https://flagcdn.com/16x12/";
@@ -33,18 +33,15 @@ export default {
     },
   },
 
-  created() {
-    this.$axios
-      .get(
-        `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`
-      )
-      .then((res) => (this.movieGenres = res.data.genres));
-
-    this.$axios
-      .get(
-        `https://api.themoviedb.org/3/genre/tv/list?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`
-      )
-      .then((res) => (this.movieGenres = res.data.genres));
+  computed: {
+    filteredItems() {
+      if (this.selectedGenre === "-1") return this.items;
+      else {
+        return this.items.filter((item) => {
+          if (item.genre_ids.includes(this.selectedGenre)) return true;
+        });
+      }
+    },
   },
 };
 </script>

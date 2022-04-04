@@ -15,6 +15,17 @@
       </nav>
     </div>
     <div class="d-flex align-items-center text-white">
+      <select
+        v-model="selectedGenre"
+        class="form-select me-3"
+        @change="$emit('genre', selectedGenre)"
+      >
+        <option selected disabled>Seleziona genere</option>
+        <option value="-1">Tutti</option>
+        <option v-for="genre in allGenres" :key="genre.id" :value="genre.id">
+          {{ genre.name }}
+        </option>
+      </select>
       <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
       <input
         v-model="searchQuery"
@@ -30,8 +41,13 @@
 <script>
 export default {
   name: "NavBar",
+  props: {
+    tvGenres: Array,
+    movieGenres: Array,
+  },
   data: () => ({
     searchQuery: "",
+    selectedGenre: "",
     links: [
       {
         text: "Home",
@@ -72,6 +88,20 @@ export default {
       this.$emit("changeTab", this.currentTab);
     },
   },
+  computed: {
+    allGenres() {
+      let allGenres = this.movieGenres.concat(this.tvGenres);
+
+      const uniqueIds = [];
+
+      return allGenres.filter((genre) => {
+        if (!uniqueIds.includes(genre.id)) {
+          uniqueIds.push(genre.id);
+          return true;
+        }
+      });
+    },
+  },
 };
 </script>
 
@@ -93,6 +123,18 @@ header {
       &.active {
         color: white;
       }
+    }
+  }
+
+  .form-select {
+    background-color: black;
+    color: white;
+    border: 0;
+    border-bottom: 1px solid white;
+    border-radius: 0;
+
+    &:focus {
+      box-shadow: none;
     }
   }
 

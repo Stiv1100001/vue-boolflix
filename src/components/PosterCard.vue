@@ -9,13 +9,13 @@
     <div class="info position-absolute top-0 py-3 px-2 w-100 h-100 rounded rounded-3 text-white">
       <p class="m-0 title">{{ info.title || info.name }}</p>
       <p class="m-0 subtitle">{{ info.original_title || info.Original_name }}</p>
-      <p class="m-0 actors">Cast: {{ credits }}</p>
+      <p class="m-0 actors">Cast: {{ castNames }}</p>
       <p class="m-0 genre" v-if="getGenres().length > 0">Generi: {{ getGenres() }}</p>
       <p class="m-0 rates">
-        <span v-for="x in getRate(info.vote_average)" :key="x">
+        <span v-for="x in getRate(info.vote_average)" :key="`star-${x}`">
           <font-awesome-icon icon="fa-solid fa-star" />
         </span>
-        <span v-for="x in 5 - getRate(info.vote_average)" :key="x">
+        <span v-for="x in 5 - getRate(info.vote_average)" :key="`star-2-${x}`">
           <font-awesome-icon icon="fa-regular fa-star" />
         </span>
       </p>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import "@fortawesome/vue-fontawesome";
 export default {
   name: "PosterCard",
   props: {
@@ -34,7 +33,16 @@ export default {
     genres: Array,
   },
 
-  data: () => ({ credits: {} }),
+  data: () => ({ casts: [] }),
+
+  computed: {
+    castNames() {
+      return this.casts
+        .slice(0, 5)
+        .map((cast) => cast.name)
+        .join(", ");
+    },
+  },
 
   methods: {
     getPoster(path) {
@@ -57,21 +65,19 @@ export default {
   },
 
   created() {
+    let url;
     if (this.type === "movie") {
-      const url = `https://api.themoviedb.org/3/movie/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
-
-      this.$axios.get(url).then((res) => {
-        const cast = res.data.cast.slice(0, 5).map((cast) => cast.name);
-        this.credits = cast.join(", ");
-      });
+      url = `https://api.themoviedb.org/3/movie/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
     } else if (this.type === "show") {
-      const url = `https://api.themoviedb.org/3/tv/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
-
-      this.$axios.get(url).then((res) => {
-        const cast = res.data.cast.slice(0, 5).map((cast) => cast.name);
-        this.credits = cast.join(", ");
-      });
+      url = `https://api.themoviedb.org/3/tv/${this.info.id}/credits?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`;
     }
+
+    this.$axios
+      .get(url)
+      .then((res) => {
+        this.casts = res.data.cast;
+      })
+      .catch((e) => console.error(e.message));
   },
 };
 </script>

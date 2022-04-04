@@ -1,14 +1,23 @@
 <template>
   <div id="app" class="vw-100">
-    <NavBar @search="search" @changeTab="changeTab" />
+    <NavBar @search="search" @genre="setGenre" :tvGenres="tvGenres" :movieGenres="movieGenres" />
     <div class="container-fluid px-3 main-container">
       <ItemList
-        v-if="currentTab === 'Home' || currentTab === 'Film'"
         :items="movies"
+        :tvGenres="tvGenres"
+        :movieGenres="movieGenres"
+        :selectedGenre="selectedGenre"
         type="movie"
         class="my-5"
       />
-      <ItemList :items="tvShows" type="show" class="mb-3" />
+      <ItemList
+        :items="tvShows"
+        :tvGenres="tvGenres"
+        :movieGenres="movieGenres"
+        :selectedGenre="selectedGenre"
+        type="show"
+        class="mb-3"
+      />
     </div>
   </div>
 </template>
@@ -22,18 +31,25 @@ export default {
   data: () => ({
     movies: [],
     tvShows: [],
+    movieGenres: [],
+    selectedGenre: "",
+    tvGenres: [],
     currentTab: "Home",
   }),
   methods: {
     search(query) {
+      let urlMovie;
+      let urlTV;
+
       if (query === "") {
         this.movies = [];
         this.tvShows = [];
-        return;
+        urlMovie = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&sort_by=popularity.desc&include_video=false`;
+        urlTV = `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&sort_by=popularity.desc&include_video=false`;
+      } else {
+        urlMovie = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
+        urlTV = `https://api.themoviedb.org/3/search/tv?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
       }
-
-      const urlMovie = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
-      const urlTV = `https://api.themoviedb.org/3/search/tv?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT&query=${query}`;
 
       this.$axios
         .get(urlMovie)
@@ -46,8 +62,8 @@ export default {
         .catch((err) => console.error(err.status_message));
     },
 
-    changeTab(tab) {
-      this.changeTab = tab;
+    setGenre(e) {
+      this.selectedGenre = e;
     },
   },
 
@@ -63,6 +79,18 @@ export default {
       .get(urlShow)
       .then((res) => (this.tvShows = res.data.results))
       .catch((err) => console.error(err.status_message));
+
+    this.$axios
+      .get(
+        `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`
+      )
+      .then((res) => (this.movieGenres = res.data.genres));
+
+    this.$axios
+      .get(
+        `https://api.themoviedb.org/3/genre/tv/list?api_key=${process.env.VUE_APP_API_KEY_3}&language=it-IT`
+      )
+      .then((res) => (this.tvGenres = res.data.genres));
   },
 };
 </script>
