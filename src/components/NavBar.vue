@@ -20,7 +20,6 @@
         class="form-select me-3"
         @change="$emit('genre', selectedGenre)"
       >
-        <!-- <option selected disabled>Seleziona genere</option> -->
         <option selected :value="-1">Tutti</option>
         <option v-for="genre in allGenres" :key="genre.id" :value="genre.id">
           {{ genre.name }}
@@ -32,7 +31,7 @@
         placeholder="Cerca Film & Serie TV"
         type="text"
         class="search-input"
-        @keyup="$emit('search', searchQuery)"
+        @keyup="search"
       />
     </div>
   </header>
@@ -75,6 +74,7 @@ export default {
       },
     ],
     currentTab: "Home",
+    searching: false,
   }),
   methods: {
     changeActive(i) {
@@ -86,6 +86,17 @@ export default {
       });
 
       this.$emit("changeTab", this.currentTab);
+    },
+
+    search() {
+      if (!this.searching) {
+        this.searching = true;
+
+        setTimeout(() => {
+          this.$emit("search", this.searchQuery);
+          this.searching = false;
+        }, 1000);
+      }
     },
   },
   computed: {
