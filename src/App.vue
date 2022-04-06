@@ -32,7 +32,7 @@ export default {
     movies: [],
     tvShows: [],
     movieGenres: [],
-    selectedGenre: "",
+    selectedGenre: -1,
     tvGenres: [],
     currentTab: "Home",
   }),

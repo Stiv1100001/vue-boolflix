@@ -35,7 +35,7 @@ export default {
 
   computed: {
     filteredItems() {
-      if (this.selectedGenre === "-1") return this.items;
+      if (this.selectedGenre === -1) return this.items;
       else {
         return this.items.filter((item) => {
           if (item.genre_ids.includes(this.selectedGenre)) return true;

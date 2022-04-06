@@ -20,8 +20,8 @@
         class="form-select me-3"
         @change="$emit('genre', selectedGenre)"
       >
-        <option selected disabled>Seleziona genere</option>
-        <option value="-1">Tutti</option>
+        <!-- <option selected disabled>Seleziona genere</option> -->
+        <option selected :value="-1">Tutti</option>
         <option v-for="genre in allGenres" :key="genre.id" :value="genre.id">
           {{ genre.name }}
         </option>
